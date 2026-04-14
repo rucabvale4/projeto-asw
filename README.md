@@ -11,6 +11,8 @@ npx tsx watch src/server.ts (liga a API na porta 3000!)
 
 -- API --
 
+ja está funcional a criação de users, squads e actions
+
 A: para criar Users:
 
 1. Abrir o Thunder Client (instalar se preciso)
