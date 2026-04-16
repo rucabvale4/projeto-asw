@@ -2,7 +2,7 @@ import { prisma } from '../lib/prisma.js';
 
 export const findAllSquads = async () => {
     return await prisma.squad.findMany({
-        include: { actions: true } // Isto permite ver as ações de cada squad
+        include: { actions: true }
     });
 };
 

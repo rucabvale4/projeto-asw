@@ -16,7 +16,6 @@ export const createUserController = async (req: Request, res: Response) => {
         const newUser = await userService.createUser(nome, email, password, role);
         res.status(201).json(newUser);
     } catch (error) {
-        // O Prisma dá erro se tentares criar dois utilizadores com o mesmo email (porque pusemos @unique no schema)
         res.status(400).json({ error: "Dados inválidos ou email já existe." });
     }
 };
