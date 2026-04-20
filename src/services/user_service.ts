@@ -9,3 +9,11 @@ export const createUser = async (nome: string, email: string, password: string, 
         data: { nome, email, password, role }
     });
 };
+
+export const deleteUser = async (id: number) => {
+    return await prisma.user.delete({ where: { id } });
+};
+
+export const updateUser = async (id: number, data: any) => {
+    return await prisma.user.update({ where: { id }, data });
+};

@@ -1,55 +1,51 @@
--- TERMINAL --
+# WeDo - API
 
-npx prisma migrate dev --name init_wedo (Para criar as tabelas reais na base de dados).
+## Requisitos
+Para a execução deste projeto, é necessário instalar as seguintes ferramentas:
+* **Node.js** (versão 18 ou superior)
+* **PostgreSQL** (instância local ou na cloud)
 
-npx prisma generate (Para atualizar o cliente Prisma).
+Após a instalação das ferramentas base, devem ser seguidos os seguintes passos de configuração:
+1. Instalar as dependências do projeto executando o comando `npm install` no diretório raiz.
+2. Criar um ficheiro designado `.env` na raiz do projeto, contendo a string de ligação à base de dados de acordo com o seguinte formato:
+   `DATABASE_URL="postgresql://utilizador:password@localhost:5432/nome_da_base_de_dados?schema=public"`
 
-npx tsx watch src/server.ts (liga a API na porta 3000)
+---
 
-para abrir no browser - http://localhost:3000/api/users
- 
-para abrir o swagger - http://localhost:3000/api-docs
+## Execução do Servidor
 
+Após a configuração dos requisitos iniciais, devem ser executados os seguintes comandos no terminal, dentro do diretório do projeto, para iniciar a aplicação:
 
--- API --
+1. **Criar as tabelas na base de dados:**
+   npx prisma migrate dev --name init_wedo
 
-ja está funcional a criação de users, squads e actions
+2. **Atualizar o cliente Prisma:**
+   npx prisma generate
 
-A: para criar Users:
+3. **Iniciar a API:**
+   npx tsx watch src/server.ts
 
-1. Abrir o Thunder Client (instalar se preciso)
-2. Clicar em New Request
-3. Mudar para Post e meter o url http://localhost:3000/api/users
-4. Mudar para Body
-5. Em JSON adicionar o cliente. exemplo:
-{
-  "nome": "Jorge",
-  "email": "jorge@wedo.pt",
-  "password": "123456",
-  "role": "Admin"
-}
+O servidor ficará disponível e a escutar pedidos na porta 3000 (http://localhost:3000).
 
-B: para criar Squads
-1. Abrir o Thunder Client
-2. Clicar em New Request
-3. Mudar para Post e meter o url http://localhost:3000/api/squads
-4. Mudar para Body
-5. Em JSON adicionar o squad. exemplo:
-{ "nomeSquad": "O Squad" }
-visualizar em http://localhost:3000/api/squads
+---
 
-C: para criar Action
-1. Abrir o Thunder Client
-2. Clicar em New Request
-3. Mudar para Post e meter o url http://localhost:3000/api/action
-4. Mudar para Body
-5. Em JSON adicionar a action. exemplo:
-{
-  "titulo": "Limpeza de Praia",
-  "categoria": "Ambiente",
-  "squadId": 1 
-}
-visualizar em http://localhost:3000/api/squads
+## Endpoints Disponíveis
 
+A API possui documentação interativa gerada através do Swagger, a qual permite a exploração e o teste de todos os endpoints implementados.
 
-para procurar e so alterar do Post para Get, e meter a categoria desejada em http://localhost:3000/api/categoria
+* **Documentação Swagger:** http://localhost:3000/api-docs
+
+### 1. Utilizadores (Users)
+* **GET** `http://localhost:3000/api/users` - Lista todos os utilizadores registados.
+* **POST** `http://localhost:3000/api/users` - Cria um novo utilizador.
+
+### 2. Grupos (Squads)
+* **GET** `http://localhost:3000/api/squads` - Lista todos os grupos existentes.
+* **POST** `http://localhost:3000/api/squads` - Cria um novo grupo.
+
+### 3. Ações (Actions)
+* **GET** `http://localhost:3000/api/actions` - Lista todas as ações.
+* **POST** `http://localhost:3000/api/actions` - Cria uma nova ação associada a um grupo.
+
+### 4. Categorias
+* **GET** `http://localhost:3000/api/categoria` - Permite a pesquisa de ações através do filtro por categoria.

@@ -1,35 +1,36 @@
 import express from 'express';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
-
 import action_route from './routes/action_route.js';
 import userRoutes from './routes/user_route.js';
 import squadRoutes from './routes/squad_route.js';
 
 const app = express();
+
 app.use(express.json());
 
+// configuracaoo do swagger
 const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'WeDo API - Documentação',
-      version: '1.0.0',
-      description: 'API para gestão de Users, Squads e Actions',
+      title: 'WeDo API - Documentação Oficial',
+      version: '1.1.0',
+      description: 'API completa para gestão de Users, Squads e Actions. Inclui suporte para CRUD total (Create, Read, Update, Delete).',
     },
     servers: [
       {
         url: 'http://localhost:3000/',
-        description: 'Servidor Local',
+        description: 'Servidor Local de Desenvolvimento',
       },
     ],
     paths: {
-      // --- Users ---
+      // users
       '/api/users': {
         get: {
           summary: 'Lista todos os utilizadores',
           tags: ['Users'],
-          responses: { '200': { description: 'Lista devolvida com sucesso' } },
+          responses: { '200': { description: 'Sucesso' } },
         },
         post: {
           summary: 'Cria um novo utilizador',
@@ -50,21 +51,67 @@ const swaggerOptions = {
               },
             },
           },
-          responses: {
-            '201': { description: 'Utilizador criado com sucesso' },
-            '400': { description: 'Erro na validação dos dados' },
-          },
+          responses: { '201': { description: 'Criado' }, '400': { description: 'Erro de validação' } },
         },
       },
-      // --- Squads ---
+      '/api/users/{id}': {
+        put: {
+          summary: 'Substituição total de um utilizador',
+          tags: ['Users'],
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+          requestBody: {
+            required: true,
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    nome: { type: 'string', example: 'Gil Dias' },
+                    email: { type: 'string', example: 'gil@wedo.pt' },
+                    password: { type: 'string', example: 'password_nova' },
+                    role: { type: 'string', example: 'Admin' },
+                  },
+                },
+              },
+            },
+          },
+          responses: { '200': { description: 'Atualizado' }, '404': { description: 'Não encontrado' } },
+        },
+        patch: {
+          summary: 'Atualização parcial (ex: apenas email)',
+          tags: ['Users'],
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+          requestBody: {
+            content: {
+              'application/json': {
+                schema: {
+                  type: 'object',
+                  properties: {
+                    email: { type: 'string', example: 'novo_email@wedo.pt' }
+                  },
+                },
+              },
+            },
+          },
+          responses: { '200': { description: 'Modificado' } },
+        },
+        delete: {
+          summary: 'Eliminar um utilizador',
+          tags: ['Users'],
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+          responses: { '204': { description: 'Apagado' } },
+        },
+      },
+
+      // squads
       '/api/squads': {
         get: {
-          summary: 'Lista todos os Squads',
+          summary: 'Lista todos os Squads e as suas respetivas Actions',
           tags: ['Squads'],
-          responses: { '200': { description: 'Lista devolvida com sucesso' } },
+          responses: { '200': { description: 'Sucesso' } },
         },
         post: {
-          summary: 'Cria um novo Squad',
+          summary: 'Criar um novo Squad',
           tags: ['Squads'],
           requestBody: {
             required: true,
@@ -79,21 +126,37 @@ const swaggerOptions = {
               },
             },
           },
-          responses: {
-            '201': { description: 'Squad criado com sucesso' },
-            '400': { description: 'Erro na validação dos dados' },
-          },
+          responses: { '201': { description: 'Criado' } },
         },
       },
-      // --- Actions ---
+      '/api/squads/{id}': {
+        put: {
+          summary: 'Alterar nome do Squad (Total)',
+          tags: ['Squads'],
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+          requestBody: {
+            required: true,
+            content: { 'application/json': { schema: { type: 'object', properties: { nomeSquad: { type: 'string', example: 'Squad Vencedor' } } } } }
+          },
+          responses: { '200': { description: 'Atualizado' } }
+        },
+        delete: {
+          summary: 'Remover um Squad',
+          tags: ['Squads'],
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+          responses: { '204': { description: 'Removido' } }
+        }
+      },
+
+      // actions
       '/api/actions': {
         get: {
-          summary: 'Lista todas as Actions',
+          summary: 'Lista todas as Actions registadas',
           tags: ['Actions'],
-          responses: { '200': { description: 'Lista devolvida com sucesso' } },
+          responses: { '200': { description: 'Sucesso' } },
         },
         post: {
-          summary: 'Cria uma nova Action',
+          summary: 'Cria uma nova Action associada a um Squad',
           tags: ['Actions'],
           requestBody: {
             required: true,
@@ -104,33 +167,49 @@ const swaggerOptions = {
                   properties: {
                     titulo: { type: 'string', example: 'Peladinha no Jamor' },
                     categoria: { type: 'string', example: 'Desporto' },
-                    descricao: { type: 'string', example: 'Jogo futebol 7x7 no estadio do Jamor' },
-                    squadId: { type: 'number', example: 1 }
+                    descricao: { type: 'string', example: 'Jogo futebol 7x7' },
+                    squadId: { type: 'integer', example: 1 }
                   },
                 },
               },
             },
           },
-          responses: {
-            '201': { description: 'Ação criada com sucesso' },
-            '400': { description: 'Erro na validação dos dados' },
-          },
+          responses: { '201': { description: 'Criado' } },
         },
+      },
+      '/api/actions/{id}': {
+        patch: {
+          summary: 'Atualiza detalhes de uma Action',
+          tags: ['Actions'],
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+          requestBody: {
+            content: { 'application/json': { schema: { type: 'object', properties: { titulo: { type: 'string', example: 'Peladinha (Adiada)' } } } } }
+          },
+          responses: { '200': { description: 'Atualizada' } }
+        },
+        delete: {
+          summary: 'Apaga uma Action',
+          tags: ['Actions'],
+          parameters: [{ name: 'id', in: 'path', required: true, schema: { type: 'integer' } }],
+          responses: { '204': { description: 'Apagada' } }
+        }
       }
     },
   },
-  apis: [], 
+  apis: [],
 };
 
 const specs = swaggerJsdoc(swaggerOptions);
-
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
+// ativacao das rotas
 app.use('/api/actions', action_route);
 app.use('/api/users', userRoutes);
 app.use('/api/squads', squadRoutes);
 
-app.listen(3000, () => {
-    console.log("Servidor ligado!");
-    console.log("Documentação disponível em: http://localhost:3000/api-docs");
+// inicio do servidor
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`\x1b[32m[SERVER]\x1b[0m Servidor em execução na porta ${PORT}`);
+    console.log(`\x1b[34m[INFO]\x1b[0m Swagger UI disponível em: http://localhost:${PORT}/api-docs`);
 });

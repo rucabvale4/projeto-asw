@@ -19,3 +19,33 @@ export const createSquadController = async (req: Request, res: Response) => {
         res.status(400).json({ error: "Dados inválidos para o Squad." });
     }
 };
+
+export const updateSquadController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const squadAtualizado = await squadService.updateSquad(Number(id), req.body);
+        res.status(200).json(squadAtualizado);
+    } catch (error) {
+        res.status(404).json({ error: "Squad não encontrado ou falha ao atualizar." });
+    }
+};
+
+export const putSquadController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const squad = await squadService.updateSquad(Number(id), req.body);
+        res.status(200).json(squad);
+    } catch (error) {
+        res.status(404).json({ error: "Squad não encontrado." });
+    }
+};
+
+export const deleteSquadController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        await squadService.deleteSquad(Number(id));
+        res.status(204).send();
+    } catch (error) {
+        res.status(404).json({ error: "Erro ao apagar squad." });
+    }
+};

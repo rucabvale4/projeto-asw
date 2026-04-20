@@ -19,3 +19,32 @@ export const createUserController = async (req: Request, res: Response) => {
         res.status(400).json({ error: "Dados inválidos ou email já existe." });
     }
 };
+
+export const updateUserController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const user = await userService.updateUser(Number(id), req.body);
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(404).json({ error: "Utilizador não encontrado." });
+    }
+};
+
+export const putUserController = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+        const user = await userService.updateUser(Number(id), req.body);
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(404).json({ error: "Erro na substituição total." });
+    }
+};
+
+export const deleteUserController = async (req: Request, res: Response) => {
+    try {
+        await userService.deleteUser(Number(req.params.id));
+        res.status(204).send();
+    } catch (error) {
+        res.status(404).json({ error: "Erro ao apagar utilizador." });
+    }
+};
