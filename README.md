@@ -31,17 +31,19 @@ O servidor ficará disponível e a escutar pedidos na porta 3000 (http://localho
 A API utiliza JWT (JSON Web Tokens) para proteger as rotas de escrita e modificação.
 As palavras-passe são armazenadas de forma segura utilizando o algoritmo de hashing Bcrypt.
 
-### MOC ACCOUNT
-* `{
-  "email": "comandante@wedo.pt",
-  "password": "123456"
-}
 
 ### Como autenticar:
 1. **Registo:** Cria uma conta no endpoint POST /api/users.
 2. **Login:** Envia as tuas credenciais para POST /api/auth/login.
 3. **Token:** A API devolverá um token. Copia esse código.
 4. **Uso:** Em todos os pedidos para rotas protegidas, deves incluir o cabeçalho: `Authorization: Bearer <teu_token_aqui>`
+
+### Moc Account
+```json
+{
+  "email": "comandante@wedo.pt",
+  "password": "123456"
+}
 
 ---
 
